@@ -1,9 +1,13 @@
 package com.ae.poc.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,22 +28,22 @@ public class PocDetailsController {
 	@Autowired
 	private EmailService emailService;
 	
-//	@PostMapping("/savePoc")
-//	public ResponseEntity<?> savePoc(@RequestBody PocDetails poc){
-//		PocDetails pocDetails = this.pocDetailsService.savePoc(poc);
-//		return new ResponseEntity<>(pocDetails, HttpStatus.OK);
-//	}
+	@GetMapping("/getPocById/{id}")
+	public ResponseEntity<?> getPocById(@PathVariable Integer id){
+		Optional<PocDetails> poc = this.pocDetailsService.getPocById(id);
+		return new ResponseEntity<>(poc,HttpStatus.OK);
+	}
 	
 	@PostMapping("/save")
 	public ResponseEntity<?> savePoc(@RequestBody PocDetails poc) {
-		
+	    System.out.println("📩 Incoming POC payload: " + poc);
+
 	    try {
 	        PocDetails saved = pocDetailsService.savePoc(poc);
-	        
 
-	        if (saved.getPocId() != null) {
-	            // 📧 Send email after saving
-	            emailService.sendPocMail(saved, "devopsbyzielotech@gmail.com");
+	        if (saved.getId() != null) {
+	            // 📧 Send email after saving using ID
+	            emailService.sendPocMail(saved.getId(), "devopsbyzielotech@gmail.com");
 
 	            return ResponseEntity
 	                    .status(HttpStatus.CREATED)
@@ -55,6 +59,7 @@ public class PocDetailsController {
 	                .body("POC creation failed: " + e.getMessage());
 	    }
 	}
+
 
 
 

@@ -2,10 +2,12 @@ package com.ae.poc.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,142 +17,76 @@ import lombok.Setter;
 @Data
 @Getter
 @Setter
+@Table(name = "poc_details")
 public class PocDetails {
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer pocId;
+    private Integer id;
 
-
-    @JsonProperty("salesPerson")   // ✅ matches frontend payload
+    @Column(name = "sp_name") // Map to database column
+    @JsonProperty("salesPerson")
     private String spName;
 
+    @Column(name = "region")
     @JsonProperty("region")
     private String region;
 
+    @Column(name = "end_customer_type")
     @JsonProperty("endCustomerType")
     private String endCustomerType;
 
+    @Column(name = "process_type")
     @JsonProperty("processType")
     private String processType;
 
+    @Column(name = "company_name")
     @JsonProperty("companyName")
     private String companyName;
 
+    @Column(name = "spoc")
     @JsonProperty("spoc")
     private String spoc;
 
+    @Column(name = "spoc_email")
     @JsonProperty("spocEmail")
     private String spocEmail;
 
+    @Column(name = "designation")
     @JsonProperty("designation")
     private String designation;
 
+    @Column(name = "mobile_number")
     @JsonProperty("mobileNumber")
     private String mobileNumber;
 
+    @Column(name = "usecase")
     @JsonProperty("usecase")
     private String usecase;
 
+    @Column(name = "brief")
     @JsonProperty("brief")
     private String brief;
 
-    // ✅ Partner fields
+    // Partner fields
+    @Column(name = "partner_company_name")
     @JsonProperty("partnerCompanyName")
     private String partnerCompanyName;
 
+    @Column(name = "partner_spoc")
     @JsonProperty("partnerSpoc")
     private String partnerSpoc;
 
+    @Column(name = "partner_spoc_email")
     @JsonProperty("partnerSpocEmail")
     private String partnerSpocEmail;
 
+    @Column(name = "partner_designation")
     @JsonProperty("partnerDesignation")
     private String partnerDesignation;
 
+    @Column(name = "partner_mobile_number")
     @JsonProperty("partnerMobileNumber")
     private String partnerMobileNumber;
     
-    public Integer getPocId() {
-        return pocId;
-    }
-
-	public Object getSpName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getRegion() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getCompanyName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getPartnerCompanyName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getUsecase() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getBrief() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getEndCustomerType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getPartnerSpoc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getPartnerSpocEmail() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getPartnerDesignation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getProcessType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getSpoc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getSpocEmail() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getDesignation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getMobileNumber() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getPartnerMobileNumber() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
 }
