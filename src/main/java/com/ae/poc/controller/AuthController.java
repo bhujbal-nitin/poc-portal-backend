@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ae.poc.entity.LoginRequest;
 import com.ae.poc.entity.User;
 import com.ae.poc.repo.UserRepository;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173") // Allow React app origin
+@CrossOrigin(origins = "http://localhost:3000") // Allow React app origin
 public class AuthController {
 
     @Autowired
@@ -27,9 +28,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
+            System.out.println("Login attempt for: " + loginRequest.getUsername());
+            
             Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
             
             if (userOptional.isEmpty()) {
+                System.out.println("User not found: " + loginRequest.getUsername());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid credentials"));
             }
@@ -38,12 +42,13 @@ public class AuthController {
             
             // Check password (you should use password encoding in production)
             if (!user.getPassword().equals(loginRequest.getPassword())) {
+                System.out.println("Invalid password for user: " + loginRequest.getUsername());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid credentials"));
             }
 
             // Generate token (simplified - use JWT in production)
-            String token = "generated-token-" + user.getId();
+            String token = "generated-token-" + user.getId() + "-" + System.currentTimeMillis();
             
             // Return user info without password
             Map<String, Object> response = new HashMap<>();
@@ -55,23 +60,14 @@ public class AuthController {
                 "role", user.getRole()
             ));
 
+            System.out.println("Login successful for: " + loginRequest.getUsername());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            System.out.println("Login error: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "Login failed"));
+                .body(Map.of("message", "Login failed: " + e.getMessage()));
         }
-    }
-
-    // Login request DTO
-    public static class LoginRequest {
-        private String username;
-        private String password;
-        
-        // getters and setters
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
     }
 }
