@@ -21,12 +21,7 @@ public class SalesController {
 	@Autowired
 	private SalesService salesService;
 	
-//	@GetMapping("/getAllSalesPerson")
-//	public ResponseEntity<?> getAllSalesPerson(){
-//		List<String> salesPersons = this.salesService.getAllSalesPerson();
-//		return new ResponseEntity<>(salesPersons, HttpStatus.OK);
-//	}
-//	
+
 	@GetMapping("/getAllSalesPerson")
 	public ResponseEntity<?> getAllSalesPerson(@RequestHeader("Authorization") String authHeader) {
 	    // Validate token

@@ -1,5 +1,6 @@
 package com.ae.poc.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,15 @@ public class PocPrjIdController {
     
     @Autowired
     private PocPrjIdService pocService;
+    
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllPoc(){
+    	List<PocUsecase> poc = this.pocService.getAllPoc();
+    	
+    	return new ResponseEntity<>(poc, HttpStatus.OK);
+    }
+    
+
     
     @PostMapping("/savepocprjid")
     public ResponseEntity<?> savePoc(@RequestBody PocUsecase pocUsecase) {

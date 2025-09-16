@@ -1,5 +1,7 @@
 package com.ae.poc.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +27,14 @@ public class PocPrjIdServiceImpl implements PocPrjIdService {
             throw new RuntimeException("Error saving POC: " + e.getMessage(), e);
         }
     }
+
+	@Override
+	public List<PocUsecase> getAllPoc() {
+		// TODO Auto-generated method stub
+		List<PocUsecase> poc = this.pocRepo.findAll();
+				
+		return poc;
+	}
+
+
 }
