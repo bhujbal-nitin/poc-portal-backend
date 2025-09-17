@@ -28,4 +28,11 @@ public class UserServiceImpl implements UserService{
 		return assigneToUser;
 	}
 
+	@Override
+	public List<String> getAllApprovedBy() {
+		// TODO Auto-generated method stub
+		List<String> approvedBy = this.userRepo.getAllApprovedBy();
+		return approvedBy;
+	}
+
 }

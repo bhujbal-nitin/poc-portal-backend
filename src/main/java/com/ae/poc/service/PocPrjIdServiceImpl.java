@@ -1,5 +1,6 @@
 package com.ae.poc.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +39,53 @@ public class PocPrjIdServiceImpl implements PocPrjIdService {
 		return poc;
 	}
 
-//	@Override
-//	public PocUsecase deletePocById(String id) {
-//		// TODO Auto-generated method stub
-//		PocUsecase poc = this.pocRepo.getById(id);
-//		this.pocRepo.deleteById(id);
-//		
-//		return poc;
-//	}
+	@Override
+    public PocUsecase updatePocUsecase(String pocId, PocUsecase pocUsecase) {
+        PocUsecase existingPoc = this.pocRepo.findById(pocId)
+                .orElseThrow(() -> new RuntimeException("POC not found with id: " + pocId));
+
+        // Update all fields from the request
+        existingPoc.setPocName(pocUsecase.getPocName());
+        existingPoc.setEntityType(pocUsecase.getEntityType());
+        existingPoc.setEntityName(pocUsecase.getEntityName());
+        existingPoc.setSalesPerson(pocUsecase.getSalesPerson());
+        existingPoc.setDescription(pocUsecase.getDescription());
+        existingPoc.setAssignedTo(pocUsecase.getAssignedTo());
+        existingPoc.setCreatedBy(pocUsecase.getCreatedBy());
+        existingPoc.setStartDate(pocUsecase.getStartDate());
+        existingPoc.setEndDate(pocUsecase.getEndDate());
+        existingPoc.setActualStartDate(pocUsecase.getActualStartDate());
+        existingPoc.setActualEndDate(pocUsecase.getActualEndDate());
+        existingPoc.setEstimatedEfforts(pocUsecase.getEstimatedEfforts());
+        existingPoc.setTotalEfforts(pocUsecase.getTotalEfforts());
+        
+        // Calculate variance days if both actual dates are provided
+        if (pocUsecase.getActualStartDate() != null && pocUsecase.getActualEndDate() != null) {
+            long variance = java.time.temporal.ChronoUnit.DAYS.between(
+                pocUsecase.getActualStartDate(), pocUsecase.getActualEndDate()
+            );
+            existingPoc.setVarianceDays(BigDecimal.valueOf(variance));
+        } else {
+            existingPoc.setVarianceDays(pocUsecase.getVarianceDays());
+        }
+        
+        existingPoc.setApprovedBy(pocUsecase.getApprovedBy());
+        existingPoc.setRemark(pocUsecase.getRemark());
+        existingPoc.setRegion(pocUsecase.getRegion());
+        existingPoc.setIsBillable(pocUsecase.getIsBillable());
+        existingPoc.setPocType(pocUsecase.getPocType());
+        existingPoc.setSpocEmail(pocUsecase.getSpocEmail());
+        existingPoc.setSpocDesignation(pocUsecase.getSpocDesignation());
+        existingPoc.setTags(pocUsecase.getTags());
+        existingPoc.setStatus(pocUsecase.getStatus());
+
+        return pocRepo.save(existingPoc);
+    }
+	
+	@Override
+    public boolean existsByPocId(String pocId) {
+        return this.pocRepo.existsById(pocId);
+    }
 	
 	@Override
     @Transactional

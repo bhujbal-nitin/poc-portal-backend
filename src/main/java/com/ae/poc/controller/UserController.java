@@ -33,5 +33,11 @@ public class UserController {
 		List<String> assigneToUser = this.userService.getAllAssignTo();
 		return new ResponseEntity<>(assigneToUser, HttpStatus.OK);
 	}
+	
+	@GetMapping("/getAllApprovedBy")
+	public ResponseEntity<?> getAllApprovedBy(){
+		List<String> approvedBy = this.userService.getAllApprovedBy();
+		return new ResponseEntity<>(approvedBy, HttpStatus.OK);
+	}
 
 }

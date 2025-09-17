@@ -1,5 +1,6 @@
 package com.ae.poc.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ae.poc.dto.PocUsecaseDTO;
 import com.ae.poc.entity.PocUsecase;
 import com.ae.poc.service.PocPrjIdService;
 
@@ -39,11 +42,75 @@ public class PocPrjIdController {
     	return new ResponseEntity<>(poc, HttpStatus.OK);
     }
     
-//    @DeleteMapping("/delete/{pocId}")
-//    public ResponseEntity<?> deletePocById(@PathVariable("pocId") String id){
-//    	PocUsecase poc = this.pocService.deletePocById(id);
-//    	return new ResponseEntity<>(poc,HttpStatus.OK);
-//    }
+
+    @PutMapping("/update/{pocId}")
+    public ResponseEntity<?> updatePocUsecase(@PathVariable String pocId, @RequestBody PocUsecaseDTO pocUsecaseDTO) {
+        try {
+            // Check if POC exists
+            if (!this.pocService.existsByPocId(pocId)) {
+                Map<String, String> response = new HashMap<>();
+                response.put("success", "false");
+                response.put("message", "POC not found with id: " + pocId);
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Convert DTO to Entity
+            PocUsecase pocUsecase = convertToEntity(pocUsecaseDTO);
+            
+            // Update the POC
+            PocUsecase updatedPoc = pocService.updatePocUsecase(pocId, pocUsecase);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "POC updated successfully");
+            response.put("data", updatedPoc);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("success", "false");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("success", "false");
+            response.put("message", "Error updating POC: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    private PocUsecase convertToEntity(PocUsecaseDTO dto) {
+        PocUsecase entity = new PocUsecase();
+        entity.setPocId(dto.getPocId());
+        entity.setPocName(dto.getPocName());
+        entity.setEntityType(dto.getEntityType());
+        entity.setEntityName(dto.getEntityName());
+        entity.setSalesPerson(dto.getSalesPerson());
+        entity.setDescription(dto.getDescription());
+        entity.setAssignedTo(dto.getAssignedTo());
+        entity.setCreatedBy(dto.getCreatedBy());
+        entity.setStartDate(dto.getStartDate());
+        entity.setEndDate(dto.getEndDate());
+        entity.setActualStartDate(dto.getActualStartDate());
+        entity.setActualEndDate(dto.getActualEndDate());
+        entity.setEstimatedEfforts(dto.getEstimatedEfforts());
+        entity.setTotalEfforts(dto.getTotalEfforts());
+        entity.setVarianceDays(dto.getVarianceDays());
+        entity.setApprovedBy(dto.getApprovedBy());
+        entity.setRemark(dto.getRemark());
+        entity.setRegion(dto.getRegion());
+        entity.setIsBillable(dto.getIsBillable());
+        entity.setPocType(dto.getPocType());
+        entity.setSpocEmail(dto.getSpocEmail());
+        entity.setSpocDesignation(dto.getSpocDesignation());
+        entity.setTags(dto.getTags());
+        entity.setStatus(dto.getStatus());
+        
+        return entity;
+    }
+
+    
     
     @DeleteMapping("/delete/{pocId}")
     public ResponseEntity<?> deletePocById(@PathVariable("pocId") String id) {

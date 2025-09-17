@@ -17,6 +17,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     
     @Query(value = "SELECT u.full_name FROM assigned_to a JOIN users u ON a.id = u.id", nativeQuery = true)
     List<String> getAllAssignTo();
+    
+    @Query(value = "SELECT u.full_name FROM approved_by a JOIN users u ON a.id = u.id", nativeQuery = true)
+	List<String> getAllApprovedBy();
 
 	
 	

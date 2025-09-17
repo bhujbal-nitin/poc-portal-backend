@@ -9,8 +9,11 @@ public interface PocPrjIdService {
 
 	List<PocUsecase> getAllPoc();
 
-//	PocUsecase deletePocById(String id);
 	boolean deletePocById(String pocId);
+	
+	PocUsecase updatePocUsecase(String pocId, PocUsecase pocUsecase);
+
+	boolean existsByPocId(String pocId);
 
 
 }
