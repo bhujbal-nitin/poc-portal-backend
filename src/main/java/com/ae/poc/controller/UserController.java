@@ -1,5 +1,6 @@
 package com.ae.poc.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,11 @@ public class UserController {
         Optional<String> createdBy = userService.findFullNameByUserName(username);
         return new ResponseEntity<>(createdBy, HttpStatus.OK);
     }
+	
+	@GetMapping("/getAllAssignTo")
+	public ResponseEntity<?> getAllAssignTo(){
+		List<String> assigneToUser = this.userService.getAllAssignTo();
+		return new ResponseEntity<>(assigneToUser, HttpStatus.OK);
+	}
 
 }

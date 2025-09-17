@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.ae.poc.entity.PocUsecase;
 import com.ae.poc.repo.PocPrjIdRepo;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PocPrjIdServiceImpl implements PocPrjIdService {
 
@@ -35,6 +37,30 @@ public class PocPrjIdServiceImpl implements PocPrjIdService {
 				
 		return poc;
 	}
+
+//	@Override
+//	public PocUsecase deletePocById(String id) {
+//		// TODO Auto-generated method stub
+//		PocUsecase poc = this.pocRepo.getById(id);
+//		this.pocRepo.deleteById(id);
+//		
+//		return poc;
+//	}
+	
+	@Override
+    @Transactional
+    public boolean deletePocById(String pocId) {
+        try {
+            // Check if the record exists
+            if (pocRepo.existsById(pocId)) {
+                pocRepo.deleteById(pocId);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting POC with ID: " + pocId, e);
+        }
+    }
 
 
 }

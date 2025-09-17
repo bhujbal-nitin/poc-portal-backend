@@ -17,16 +17,18 @@ import com.ae.poc.entity.LoginRequest;
 import com.ae.poc.entity.User;
 import com.ae.poc.repo.UserRepository;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // Allow React app origin
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true") // Add allowCredentials
 public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) { // Add HttpSession parameter
         try {
             System.out.println("Login attempt for: " + loginRequest.getUsername());
             
@@ -47,10 +49,14 @@ public class AuthController {
                     .body(Map.of("message", "Invalid credentials"));
             }
 
+            // Store user in session for session-based authentication
+            session.setAttribute("authenticated", true);
+            session.setAttribute("user", user);
+
             // Generate token (simplified - use JWT in production)
             String token = "generated-token-" + user.getId() + "-" + System.currentTimeMillis();
             
-            // Return user info without password
+            // Return user info without password - match frontend expectation
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", Map.of(

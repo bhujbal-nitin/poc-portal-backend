@@ -9,5 +9,8 @@ public interface PocPrjIdService {
 
 	List<PocUsecase> getAllPoc();
 
+//	PocUsecase deletePocById(String id);
+	boolean deletePocById(String pocId);
+
 
 }
