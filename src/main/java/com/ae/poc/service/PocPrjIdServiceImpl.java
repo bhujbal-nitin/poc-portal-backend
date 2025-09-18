@@ -2,6 +2,7 @@ package com.ae.poc.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,18 +18,53 @@ public class PocPrjIdServiceImpl implements PocPrjIdService {
     @Autowired
     private PocPrjIdRepo pocRepo;
 
+//    @Override
+//    public PocUsecase savePoc(PocUsecase pocUsecase) {
+//        try {
+//            // Set default values for optional fields if needed
+//            if (pocUsecase.getStatus() == null) {
+//                pocUsecase.setStatus("Draft");
+//            }
+//            
+//            return this.pocRepo.save(pocUsecase);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Error saving POC: " + e.getMessage(), e);
+//        }
+//    }
+    
+ // In your PocService.java
     @Override
     public PocUsecase savePoc(PocUsecase pocUsecase) {
-        try {
-            // Set default values for optional fields if needed
-            if (pocUsecase.getStatus() == null) {
-                pocUsecase.setStatus("Draft");
-            }
-            
-            return this.pocRepo.save(pocUsecase);
-        } catch (Exception e) {
-            throw new RuntimeException("Error saving POC: " + e.getMessage(), e);
+        // If the ID already exists (contains a number), just save it
+        if (pocUsecase.getPocId() != null && pocUsecase.getPocId().matches(".*-\\d+$")) {
+            return pocRepo.save(pocUsecase);
         }
+        
+        // Generate new ID based on prefix
+        String prefix = pocUsecase.getPocId();
+        String nextId = generateNextId(prefix);
+        pocUsecase.setPocId(nextId);
+        
+        return pocRepo.save(pocUsecase);
+    }
+
+    private String generateNextId(String prefix) {
+        // Find the highest number for this prefix
+        Optional<PocUsecase> lastPoc = pocRepo.findTopByPocIdStartingWithOrderByPocIdDesc(prefix + "-");
+        
+        int nextNumber = 1;
+        if (lastPoc.isPresent()) {
+            String lastId = lastPoc.get().getPocId();
+            try {
+                String numberPart = lastId.substring(prefix.length() + 1);
+                nextNumber = Integer.parseInt(numberPart) + 1;
+            } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+                // If parsing fails, start from 1
+                nextNumber = 1;
+            }
+        }
+        
+        return String.format("%s-%02d", prefix, nextNumber);
     }
 
 	@Override

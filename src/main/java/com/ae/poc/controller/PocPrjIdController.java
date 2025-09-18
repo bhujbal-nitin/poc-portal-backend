@@ -138,19 +138,18 @@ public class PocPrjIdController {
         try {
             logger.info("Received POC data: {}", pocUsecase);
             
-            // Validate required fields
+            // Validate required fields - now we only need prefix, not full ID
             if (pocUsecase.getPocId() == null || pocUsecase.getPocId().isEmpty()) {
-                logger.error("POC ID is required");
+                logger.error("ID Prefix is required");
                 return ResponseEntity.badRequest().body(Map.of(
                     "success", false,
-                    "message", "POC ID is required"
+                    "message", "ID Prefix is required"
                 ));
             }
             
             PocUsecase savedPoc = pocService.savePoc(pocUsecase);
             logger.info("POC saved successfully: {}", savedPoc);
             
-            // Return the expected format with success flag
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "POC created successfully",
@@ -166,4 +165,40 @@ public class PocPrjIdController {
                 ));
         }
     }
+    
+    
+    
+//    @PostMapping("/savepocprjid")
+//    public ResponseEntity<?> savePoc(@RequestBody PocUsecase pocUsecase) {
+//        try {
+//            logger.info("Received POC data: {}", pocUsecase);
+//            
+//            // Validate required fields
+//            if (pocUsecase.getPocId() == null || pocUsecase.getPocId().isEmpty()) {
+//                logger.error("POC ID is required");
+//                return ResponseEntity.badRequest().body(Map.of(
+//                    "success", false,
+//                    "message", "POC ID is required"
+//                ));
+//            }
+//            
+//            PocUsecase savedPoc = pocService.savePoc(pocUsecase);
+//            logger.info("POC saved successfully: {}", savedPoc);
+//            
+//            // Return the expected format with success flag
+//            return ResponseEntity.ok(Map.of(
+//                "success", true,
+//                "message", "POC created successfully",
+//                "data", savedPoc
+//            ));
+//            
+//        } catch (Exception e) {
+//            logger.error("Error saving POC: ", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(Map.of(
+//                    "success", false,
+//                    "message", "Failed to create POC: " + e.getMessage()
+//                ));
+//        }
+//    }
 }

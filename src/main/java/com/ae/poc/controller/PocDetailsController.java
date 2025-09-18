@@ -1,8 +1,11 @@
 package com.ae.poc.controller;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +31,9 @@ public class PocDetailsController {
 	@Autowired
 	private EmailService emailService;
 	
+	@Value("${poc.notification.recipients}")
+    private String recipients; // comma-separated string from properties
+	
 	@GetMapping("/getPocById/{id}")
 	public ResponseEntity<?> getPocById(@PathVariable Integer id){
 		Optional<PocDetails> poc = this.pocDetailsService.getPocById(id);
@@ -35,33 +41,33 @@ public class PocDetailsController {
 	}
 	
 	@PostMapping("/save")
-	public ResponseEntity<?> savePoc(@RequestBody PocDetails poc) {
-	    System.out.println("📩 Incoming POC payload: " + poc);
+    public ResponseEntity<?> savePoc(@RequestBody PocDetails poc) {
+        System.out.println("📩 Incoming POC payload: " + poc);
 
-	    try {
-	        PocDetails saved = pocDetailsService.savePoc(poc);
+        try {
+            PocDetails saved = pocDetailsService.savePoc(poc);
 
-	        if (saved.getId() != null) {
-	            // 📧 Send email after saving using ID
-	            emailService.sendPocMail(saved.getId(), "devopsbyzielotech@gmail.com");
+            if (saved.getId() != null) {
+                // Convert comma-separated string into List<String>
+                List<String> emailList = Arrays.asList(recipients.split(","));
 
-	            return ResponseEntity
-	                    .status(HttpStatus.CREATED)
-	                    .body(saved);
-	        } else {
-	            return ResponseEntity
-	                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                    .body("POC creation failed: no ID generated.");
-	        }
-	    } catch (Exception e) {
-	        return ResponseEntity
-	                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body("POC creation failed: " + e.getMessage());
-	    }
-	}
+                // Pass list to email service
+                emailService.sendPocMail(saved.getId());
 
-
-
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .body(saved);
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("POC creation failed: no ID generated.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("POC creation failed: " + e.getMessage());
+        }
+    }
 
 
 }
